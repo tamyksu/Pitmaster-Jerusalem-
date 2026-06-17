@@ -69,8 +69,9 @@
     padding: 16px 24px; background: rgba(21,16,13,.75); backdrop-filter: blur(8px);
     border-bottom: 1px solid var(--line);
   }
-  .logo{ font-family:'Frank Ruhl Libre',serif; font-size: 21px; font-weight: 700; letter-spacing: 1px; color: var(--cream); }
+  .logo{ font-family:'Frank Ruhl Libre',serif; font-size: 21px; font-weight: 700; letter-spacing: 1px; color: var(--cream); display:flex; align-items:center; }
   .logo span{ color: var(--ember); }
+  .logo img{ height: 48px; width: 48px; border-radius: 50%; object-fit: cover; }
   header .btn{ padding: 10px 24px; font-size: 14px; }
 
   /* ===== Hero ===== */
@@ -256,6 +257,10 @@
   }
   input:focus, select:focus, textarea:focus{ outline: 2px solid var(--ember); }
   .booking-form .btn{ width:100%; margin-top: 8px; }
+  .booking-form .btn[disabled]{ opacity:.6; cursor:not-allowed; }
+  .form-status{ margin-top: 12px; font-size: 14px; text-align:center; min-height: 0; }
+  .form-status.success{ color: #4caf50; }
+  .form-status.error{ color: #e8602c; }
   .or-divider{ display:flex; align-items:center; gap:12px; margin: 20px 0; color: var(--muted); font-size:13px; }
   .or-divider::before, .or-divider::after{ content:""; flex:1; height:1px; background: var(--line); }
   .booking-trust{ margin-top: 20px; font-size: 13px; color: var(--gold); font-weight:700; }
@@ -308,7 +313,7 @@
 <body>
 
 <header>
-  <div class="logo">PIT<span>MASTER</span> ירושלים</div>
+  <div class="logo"><img src="logo.png" alt="Pitmaster ירושלים"></div>
   <a href="#booking" class="btn btn-primary">הזמינו שולחן</a>
 </header>
 
@@ -610,7 +615,7 @@
     <h2>המופע מתחיל הערב - יש לכם מקום?</h2>
     <p>השאירו פרטים ונחזור אליכם לתיאום הערב המושלם. מקומות מוגבלים בכל ערב.</p>
 
-    <form class="booking-form" onsubmit="return false;">
+    <form class="booking-form" id="booking-form">
       <div class="form-row">
         <div>
           <label for="name">שם מלא</label>
@@ -637,7 +642,8 @@
           <textarea id="notes" name="notes" rows="3" placeholder="נשמח לדעת מראש על כל בקשה מיוחדת"></textarea>
         </div>
       </div>
-      <button type="submit" class="btn btn-primary">שריינו את הערב שלכם</button>
+      <button type="submit" class="btn btn-primary" id="booking-submit">שריינו את הערב שלכם</button>
+      <div id="booking-status" class="form-status"></div>
 
       <div class="or-divider">או</div>
       <a href="https://wa.me/972500000000" target="_blank" rel="noopener" class="btn btn-whatsapp" style="display:block;text-align:center">שלחו לנו הודעת וואטסאפ</a>
@@ -651,7 +657,7 @@
 <!-- ===================== פוטר ===================== -->
 <footer>
   <div class="container">
-    <div class="logo">PIT<span>MASTER</span> ירושלים</div>
+    <div class="logo"><img src="logo.png" alt="Pitmaster ירושלים"></div>
     <p>סינמה סיטי, ירושלים | כשר למהדרין | מופע בשרים חי</p>
     <p>לפרטים, הזמנות ויצירת קשר - מלאו את הטופס למעלה</p>
     <p class="legal">© כל הזכויות שמורות לפיטמאסטר ירושלים</p>
@@ -662,6 +668,46 @@
 <div class="sticky-cta">
   <a href="#booking" class="btn btn-primary">שריינו את הערב שלכם</a>
 </div>
+
+<!-- ===================== EmailJS - שליחת פרטי הזמנה למייל ===================== -->
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script>
+  // החליפו את 3 הערכים הבאים בערכים מחשבון ה-EmailJS שלכם
+  const EMAILJS_PUBLIC_KEY  = "OaWVXQZdCin_UAGTT";
+  const EMAILJS_SERVICE_ID  = "service_0iqr1ja";
+  const EMAILJS_TEMPLATE_ID = "template_fixbxoh";
+
+  emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY });
+
+  const bookingForm = document.getElementById('booking-form');
+  const submitBtn = document.getElementById('booking-submit');
+  const statusEl = document.getElementById('booking-status');
+
+  bookingForm.addEventListener('submit', function (e) {
+    e.preventDefault();
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = "שולח...";
+    statusEl.textContent = "";
+    statusEl.className = "form-status";
+
+    emailjs.sendForm(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, bookingForm)
+      .then(function () {
+        statusEl.textContent = "הפרטים נשלחו בהצלחה! נחזור אליכם בהקדם.";
+        statusEl.className = "form-status success";
+        bookingForm.reset();
+      })
+      .catch(function (error) {
+        console.error('EmailJS error:', error);
+        statusEl.textContent = "אירעה שגיאה בשליחה. נסו שוב או צרו קשר בוואטסאפ.";
+        statusEl.className = "form-status error";
+      })
+      .finally(function () {
+        submitBtn.disabled = false;
+        submitBtn.textContent = "שריינו את הערב שלכם";
+      });
+  });
+</script>
 
 </body>
 </html>
