@@ -15,11 +15,10 @@
   --bg-mid:  #161210;
   --bg-card: #1C1714;
   --fire:    #C13415;
-  --ember:   #D44E1C;
   --gold:    #B8912A;
   --stone:   #E5D8C5;
   --chalk:   #F5EFE5;
-  --smoke:   #97887E;
+  --smoke:   #A89B93;  /* lightened slightly for WCAG AA */
   --line:    #2A2018;
   --max:     1140px;
 }
@@ -36,17 +35,50 @@ body {
 }
 img { max-width: 100%; display: block; }
 
+/* ===== A11Y ===== */
+.skip-link {
+  position: fixed;
+  top: -100%;
+  right: 24px;
+  z-index: 300;
+  background: var(--gold);
+  color: var(--bg);
+  padding: 8px 18px;
+  font-weight: 800;
+  font-size: 14px;
+  border-radius: 0 0 4px 4px;
+  text-decoration: none;
+  transition: top 0.2s;
+}
+.skip-link:focus { top: 0; }
+
+*:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
 /* ===== LAYOUT ===== */
 .container { max-width: var(--max); margin: 0 auto; padding: 0 28px; }
-section { padding: 100px 0; }
 .section--alt { background: var(--bg-mid); }
 .section-header { text-align: center; margin-bottom: 56px; }
 .section-header p { max-width: 580px; margin: 10px auto 0; font-size: 16px; color: var(--smoke); }
 
+/* === SECTION PADDING VARIATION === */
+#differentiation { padding: 100px 0; }
+#how-it-works    { padding: 108px 0; }
+#benefits        { padding: 72px 0; }
+#social-proof    { padding: 100px 0; }
+#gallery         { padding: 64px 0; }
+#who-for         { padding: 88px 0; }
+#faq             { padding: 80px 0; }
+#location        { padding: 100px 0; }
+#booking         { padding: 120px 0; }
+
 /* ===== TYPOGRAPHY ===== */
 h1, h2 { font-family: 'Rubik', sans-serif; line-height: 1.1; }
 h3 { font-family: 'Heebo', sans-serif; font-weight: 800; line-height: 1.25; margin-bottom: 8px; }
-h2 { font-size: clamp(30px, 4.5vw, 46px); font-weight: 900; margin-bottom: 16px; }
+h2 { font-weight: 900; margin-bottom: 16px; }
 p { color: var(--smoke); }
 
 .eyebrow {
@@ -73,10 +105,12 @@ p { color: var(--smoke); }
 .d1 { transition-delay: 0.1s; }
 .d2 { transition-delay: 0.2s; }
 .d3 { transition-delay: 0.3s; }
+.d4 { transition-delay: 0.4s; }
+
 @media (prefers-reduced-motion: reduce) {
   .reveal { opacity: 1; transform: none; transition: none; }
-  .hero__rule-line { animation: none !important; opacity: 0.4; }
-  .hero__heading, .hero__venue, .hero__meta-wrap, .hero__cta-wrap { animation: none !important; opacity: 1; transform: none; }
+  .hero__rule-line, .hero__heading, .hero__venue,
+  .hero__meta-wrap, .hero__cta-wrap, .btn-fire { animation: none !important; opacity: 1 !important; transform: none !important; }
 }
 
 /* ===== BUTTONS ===== */
@@ -98,8 +132,14 @@ p { color: var(--smoke); }
 }
 .btn-fire:hover {
   transform: translateY(-2px);
-  box-shadow: 0 10px 32px rgba(193,52,21,0.45);
+  box-shadow: 0 12px 36px rgba(193,52,21,0.45);
 }
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(193,52,21,0); }
+  50%       { box-shadow: 0 0 0 14px rgba(193,52,21,0.18); }
+}
+.btn-fire.pulse { animation: pulse-glow 2.8s ease-in-out infinite; }
+
 .btn-outline {
   border-color: var(--gold);
   color: var(--gold);
@@ -134,21 +174,23 @@ p { color: var(--smoke); }
   position: relative;
   background: url('assets/atmosphere-2.webp') center 35% / cover no-repeat;
   padding-top: 80px;
+  overflow: hidden;
 }
 .hero::before {
   content: '';
   position: absolute;
   inset: 0;
   background: linear-gradient(180deg,
-    rgba(13,11,9,0.52) 0%,
-    rgba(13,11,9,0.66) 50%,
-    rgba(13,11,9,0.92) 100%
+    rgba(13,11,9,0.48) 0%,
+    rgba(13,11,9,0.62) 45%,
+    rgba(13,11,9,0.94) 100%
   );
 }
+/* Subtle parallax on hero bg via JS */
 .hero-inner {
   position: relative;
   z-index: 1;
-  max-width: 760px;
+  max-width: 780px;
   padding: 0 24px;
 }
 .hero__venue {
@@ -159,9 +201,8 @@ p { color: var(--smoke); }
   text-transform: uppercase;
   color: var(--gold);
   margin-bottom: 20px;
-  animation: fade-up 0.8s ease forwards;
-  animation-delay: 0.1s;
   opacity: 0;
+  animation: fade-up 0.8s ease forwards 0.1s;
 }
 .hero__rule {
   margin: 18px 0;
@@ -176,26 +217,24 @@ p { color: var(--smoke); }
   transform-origin: right;
   transform: scaleX(0);
 }
-.hero__rule-line:nth-child(1) { animation: rule-draw 1s ease forwards; animation-delay: 0.35s; }
-.hero__rule-line:nth-child(2) { animation: rule-draw 1s ease forwards; animation-delay: 0.5s; }
+.hero__rule-line:nth-child(1) { animation: rule-draw 1s ease forwards 0.35s; }
+.hero__rule-line:nth-child(2) { animation: rule-draw 1s ease forwards 0.5s; }
 @keyframes rule-draw { to { transform: scaleX(1); opacity: 0.45; } }
 
 .hero__heading {
   font-family: 'Rubik', sans-serif;
   font-weight: 900;
-  font-size: clamp(50px, 9vw, 88px);
+  font-size: clamp(50px, 9.5vw, 96px);
   color: var(--chalk);
   line-height: 1.0;
-  letter-spacing: -1px;
-  animation: fade-up 0.9s ease forwards;
-  animation-delay: 0.55s;
+  letter-spacing: -1.5px;
   opacity: 0;
+  animation: fade-up 0.9s ease forwards 0.55s;
 }
 .hero__heading em {
   font-style: italic;
   color: var(--fire);
 }
-.hero__rule--bottom { margin-top: 0; }
 
 .hero__meta-wrap {
   display: flex;
@@ -205,30 +244,27 @@ p { color: var(--smoke); }
   font-size: 13px;
   color: var(--stone);
   opacity: 0;
-  margin-bottom: 30px;
-  animation: fade-up 0.8s ease forwards;
-  animation-delay: 0.85s;
+  margin-bottom: 32px;
+  animation: fade-up 0.8s ease forwards 0.85s;
 }
-.hero__meta-item { white-space: nowrap; }
-.hero__meta-item::before { content: '·'; margin-left: 22px; color: var(--gold); }
+.hero__meta-item::before { content: '·'; margin-left: 22px; color: var(--gold); opacity: 0.7; }
 .hero__meta-item:first-child::before { display: none; }
 
 .hero__cta-wrap {
   opacity: 0;
-  animation: fade-up 0.8s ease forwards;
-  animation-delay: 1s;
+  animation: fade-up 0.8s ease forwards 1s;
 }
-.hero__cta-wrap .btn { font-size: 18px; padding: 18px 48px; }
+.hero__cta-wrap .btn { font-size: 18px; padding: 18px 52px; }
 .hero__scroll {
   display: block;
-  margin-top: 22px;
+  margin-top: 24px;
   color: var(--smoke);
   text-decoration: none;
   font-size: 13px;
   animation: float 2.6s ease-in-out infinite;
 }
-@keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(7px); } }
-@keyframes fade-up { to { opacity: 1; transform: translateY(0); } from { opacity: 0; transform: translateY(18px); } }
+@keyframes float  { 0%,100% { transform: translateY(0); }  50% { transform: translateY(7px); } }
+@keyframes fade-up { from { opacity:0; transform:translateY(18px); } to { opacity:1; transform:translateY(0); } }
 
 /* ===== DIFFERENTIATION ===== */
 .diff-wrap {
@@ -237,16 +273,25 @@ p { color: var(--smoke); }
   gap: 64px;
   align-items: start;
 }
-.diff-intro {
-  font-size: 16px;
-  line-height: 1.85;
-  margin-bottom: 28px;
-}
+.diff-intro { font-size: 16px; line-height: 1.85; margin-bottom: 28px; }
+.diff-image { position: relative; }
 .diff-image img {
   width: 100%;
   aspect-ratio: 4/5;
   object-fit: cover;
-  border-radius: 3px;
+  border-radius: 2px;
+}
+.diff-image-tag {
+  position: absolute;
+  bottom: 0; right: 0; left: 0;
+  padding: 48px 16px 14px;
+  background: linear-gradient(transparent, rgba(13,11,9,0.92));
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--gold);
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  font-family: 'Heebo', sans-serif;
 }
 
 .features {
@@ -260,17 +305,17 @@ p { color: var(--smoke); }
 .feature {
   background: var(--bg-card);
   padding: 22px 20px;
-  border-right: 3px solid var(--fire);
-  transition: background 0.2s;
+  border-right: 3px solid var(--gold);   /* gold, not fire */
+  transition: background 0.2s, border-color 0.2s;
 }
-.feature:hover { background: var(--bg-mid); }
+.feature:hover { background: #201a15; border-color: var(--fire); }
 .feature h3 { font-size: 15px; color: var(--chalk); margin-bottom: 5px; }
 .feature p { font-size: 13px; }
 
 .diff-statement {
   border-right: 3px solid var(--gold);
   background: rgba(184,145,42,0.07);
-  padding: 16px 20px;
+  padding: 18px 20px;
   font-size: 15px;
   line-height: 1.8;
   color: var(--stone);
@@ -285,25 +330,19 @@ p { color: var(--smoke); }
   align-items: center;
   margin-top: 16px;
 }
-.how-image img {
-  width: 100%;
-  height: 560px;
-  object-fit: cover;
-  border-radius: 3px;
-}
+.how-image img { width: 100%; height: 560px; object-fit: cover; border-radius: 2px; }
 .timeline { position: relative; }
 .timeline::before {
   content: '';
   position: absolute;
   top: 26px; bottom: 26px; right: 22px;
   width: 1px;
-  background: linear-gradient(to bottom, var(--fire), var(--gold));
-  opacity: 0.28;
+  background: linear-gradient(to bottom, var(--gold), transparent);
+  opacity: 0.3;
 }
 .step { display: flex; gap: 22px; padding: 18px 0; align-items: flex-start; }
 .step-num {
-  flex: 0 0 46px;
-  height: 46px;
+  flex: 0 0 46px; height: 46px;
   border-radius: 50%;
   border: 1px solid rgba(184,145,42,0.45);
   background: var(--bg-mid);
@@ -311,19 +350,19 @@ p { color: var(--smoke); }
   font-family: 'Rubik', sans-serif;
   font-weight: 900;
   font-size: 17px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1;
-  position: relative;
+  display: flex; align-items: center; justify-content: center;
+  z-index: 1; position: relative;
+  transition: background 0.2s, border-color 0.2s;
 }
+.step:hover .step-num { background: var(--bg-card); border-color: var(--gold); }
 .step-content h3 { font-size: 16px; color: var(--chalk); margin-bottom: 4px; }
 .step-content p { font-size: 14px; }
 
 /* ===== BENEFITS ===== */
+/* 01 — First card is the star: spans 2 cols, bigger type */
 .benefits-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: 1px;
   background: var(--line);
   border: 1px solid var(--line);
@@ -335,14 +374,24 @@ p { color: var(--smoke); }
   text-align: center;
   transition: background 0.2s;
 }
-.benefit:hover { background: #211c18; }
-.benefit-icon {
-  font-size: 26px;
-  line-height: 1;
-  margin-bottom: 12px;
+.benefit:hover { background: #201a15; }
+
+/* Featured benefit */
+.benefit:first-child {
+  grid-column: 1 / 3;
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  text-align: right;
+  padding: 32px 28px;
+  border-bottom: 1px solid var(--line);
 }
+.benefit:first-child .benefit-icon { font-size: 44px; flex-shrink: 0; line-height: 1; }
+.benefit:first-child h3 { font-family: 'Rubik', sans-serif; font-size: 22px; color: var(--chalk); font-weight: 900; margin-bottom: 6px; }
+.benefit:first-child p  { font-size: 15px; }
+.benefit-icon { font-size: 26px; line-height: 1; margin-bottom: 12px; }
 .benefit h3 { font-size: 15px; color: var(--chalk); margin-bottom: 6px; }
-.benefit p { font-size: 13px; }
+.benefit p  { font-size: 13px; }
 
 /* ===== SOCIAL PROOF ===== */
 .proof-badges {
@@ -363,12 +412,11 @@ p { color: var(--smoke); }
   font-size: 14px;
   letter-spacing: 0.5px;
 }
-
 .reviews-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 16px;
-  margin-bottom: 56px;
+  margin-bottom: 64px;
 }
 .review-card {
   background: var(--bg-card);
@@ -376,12 +424,14 @@ p { color: var(--smoke); }
   padding: 28px 24px;
   display: flex;
   flex-direction: column;
+  transition: border-color 0.2s, transform 0.2s;
 }
+.review-card:hover { border-color: rgba(184,145,42,0.3); transform: translateY(-3px); }
 .review-quote {
   font-family: 'Rubik', sans-serif;
   font-size: 52px;
   color: var(--fire);
-  opacity: 0.22;
+  opacity: 0.2;
   line-height: 0.7;
   margin-bottom: 16px;
   display: block;
@@ -408,6 +458,7 @@ p { color: var(--smoke); }
 .review-name { font-weight: 800; color: var(--chalk); font-size: 13px; }
 .review-date { font-size: 12px; color: var(--smoke); }
 
+/* Stats — theatrical marquee numbers */
 .stats-row {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -415,17 +466,25 @@ p { color: var(--smoke); }
   background: var(--line);
   border: 1px solid var(--line);
 }
-.stat { background: var(--bg-card); padding: 36px 24px; text-align: center; }
+.stat { background: var(--bg-card); padding: 48px 24px; text-align: center; }
 .stat-num {
   display: block;
   font-family: 'Rubik', sans-serif;
-  font-size: clamp(40px, 5vw, 60px);
+  font-size: clamp(60px, 8vw, 88px);
   font-weight: 900;
   color: var(--chalk);
   line-height: 1;
-  margin-bottom: 6px;
+  margin-bottom: 8px;
+  letter-spacing: -2px;
 }
-.stat-label { font-size: 13px; color: var(--smoke); }
+.stat-label {
+  font-size: 13px;
+  color: var(--smoke);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  font-size: 11px;
+  font-weight: 700;
+}
 
 /* ===== GALLERY ===== */
 .gallery-mosaic {
@@ -435,13 +494,26 @@ p { color: var(--smoke); }
   gap: 10px;
   margin-top: 48px;
 }
-.gitem { overflow: hidden; border-radius: 2px; }
-.gitem img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; }
+.gitem { overflow: hidden; border-radius: 2px; position: relative; }
+.gitem img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s ease; }
 .gitem:hover img { transform: scale(1.06); }
-.gitem-a { grid-column: 1 / 8; grid-row: 1 / 3; }
+/* Always-visible caption */
+.gitem-cap {
+  position: absolute;
+  bottom: 0; right: 0; left: 0;
+  padding: 40px 14px 12px;
+  background: linear-gradient(transparent, rgba(13,11,9,0.88));
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--stone);
+  font-family: 'Heebo', sans-serif;
+}
+.gitem-a { grid-column: 1 / 8;  grid-row: 1 / 3; }
 .gitem-b { grid-column: 8 / 13; grid-row: 1 / 2; }
 .gitem-c { grid-column: 8 / 11; grid-row: 2 / 3; }
-.gitem-d { grid-column: 11 / 13; grid-row: 2 / 3; }
+.gitem-d { grid-column: 11/ 13; grid-row: 2 / 3; }
 
 /* ===== WHO FOR ===== */
 .who-grid {
@@ -462,7 +534,7 @@ p { color: var(--smoke); }
   border-top: 2px solid var(--gold);
   transition: background 0.2s;
 }
-.who-item:hover { background: var(--bg-mid); }
+.who-item:hover { background: #201a15; }
 .who-mark {
   font-family: 'Rubik', sans-serif;
   font-size: 30px;
@@ -474,7 +546,7 @@ p { color: var(--smoke); }
   margin-top: 2px;
 }
 .who-item h3 { font-size: 17px; color: var(--chalk); }
-.who-item p { font-size: 14px; }
+.who-item p  { font-size: 14px; }
 
 /* ===== FAQ ===== */
 .faq-list { max-width: 760px; margin: 48px auto 0; }
@@ -485,7 +557,7 @@ details {
   margin-bottom: 6px;
   transition: border-color 0.2s;
 }
-details[open] { border-color: rgba(193,52,21,0.45); }
+details[open] { border-color: rgba(184,145,42,0.4); }
 summary {
   cursor: pointer;
   font-family: 'Heebo', sans-serif;
@@ -499,8 +571,8 @@ summary {
   gap: 12px;
 }
 summary::-webkit-details-marker { display: none; }
-summary::after { content: '+'; color: var(--fire); font-size: 22px; font-weight: 900; flex-shrink: 0; }
-details[open] summary::after { content: '−'; }
+summary::after { content: '+'; color: var(--gold); font-size: 22px; font-weight: 900; flex-shrink: 0; }
+details[open] summary::after { content: '−'; color: var(--fire); }
 details p { margin-top: 14px; font-size: 15px; }
 
 /* ===== LOCATION ===== */
@@ -529,9 +601,8 @@ details p { margin-top: 14px; font-size: 15px; }
 
 /* ===== BOOKING ===== */
 .booking-section { background: var(--bg-mid); text-align: center; }
-.booking-section h2 { color: var(--chalk); margin-bottom: 12px; }
+.booking-section h2 { font-size: clamp(30px, 5vw, 52px); color: var(--chalk); margin-bottom: 12px; }
 .booking-lede { max-width: 520px; margin: 0 auto 40px; font-size: 16px; }
-
 .booking-form {
   max-width: 540px;
   margin: 0 auto;
@@ -550,7 +621,6 @@ label {
   margin-bottom: 6px;
   text-transform: uppercase;
   letter-spacing: 1px;
-  font-family: 'Heebo', sans-serif;
 }
 input, select, textarea {
   width: 100%;
@@ -563,27 +633,17 @@ input, select, textarea {
   border-radius: 0;
   transition: border-color 0.2s;
 }
-input:focus, select:focus, textarea:focus { outline: none; border-color: var(--fire); }
-.booking-form .btn {
-  width: 100%;
-  margin-top: 8px;
-  border-radius: 0;
-  padding: 16px;
-  font-size: 17px;
-}
+input:focus, select:focus, textarea:focus { outline: none; border-color: var(--gold); }
+.booking-form .btn { width: 100%; margin-top: 8px; border-radius: 0; padding: 16px; font-size: 17px; }
 .form-status { margin-top: 12px; font-size: 14px; text-align: center; }
-.form-status.ok { color: #4caf50; }
-.form-status.err { color: var(--ember); }
+.form-status.ok  { color: #4caf50; }
+.form-status.err { color: var(--fire); }
 .or-divider {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin: 20px 0;
-  color: var(--smoke);
-  font-size: 13px;
+  display: flex; align-items: center; gap: 12px;
+  margin: 20px 0; color: var(--smoke); font-size: 13px;
 }
 .or-divider::before, .or-divider::after { content: ''; flex: 1; height: 1px; background: var(--line); }
-.booking-trust { margin-top: 20px; font-size: 13px; color: var(--gold); font-weight: 700; }
+.booking-trust   { margin-top: 20px; font-size: 13px; color: var(--gold); font-weight: 700; }
 .booking-urgency { margin-top: 5px; font-size: 12px; color: var(--smoke); }
 
 /* ===== FOOTER ===== */
@@ -610,9 +670,8 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--f
 }
 .sticky-cta .btn { width: 100%; border-radius: 0; }
 
-/* ===== RESPONSIVE ===== */
+/* ===== RESPONSIVE — 960px ===== */
 @media (max-width: 960px) {
-  section { padding: 72px 0; }
   .site-header .btn { display: none; }
   .sticky-cta { display: block; }
 
@@ -623,56 +682,114 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--f
   .how-wrap { grid-template-columns: 1fr; gap: 40px; }
   .how-image img { height: 300px; }
 
-  .benefits-grid { grid-template-columns: repeat(2, 1fr); }
+  /* Benefits: reset first-child span on tablet */
+  .benefits-grid { grid-template-columns: 1fr 1fr; }
+  .benefit:first-child { grid-column: 1 / 3; }
 
   .reviews-grid { grid-template-columns: 1fr 1fr; }
-
   .proof-badges { grid-template-columns: 1fr; }
 
-  .gallery-mosaic {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: auto;
-    gap: 8px;
-  }
-  .gitem-a { grid-column: 1 / 3; grid-row: auto; height: 240px; }
-  .gitem-b, .gitem-c, .gitem-d { grid-column: auto; grid-row: auto; height: 180px; }
+  .gallery-mosaic { grid-template-columns: 1fr 1fr; grid-template-rows: 220px 220px 200px; gap: 8px; }
+  .gitem-a { grid-column: 1 / 3; grid-row: 1 / 2; }
+  .gitem-b { grid-column: 1 / 2; grid-row: 2 / 3; }
+  .gitem-c { grid-column: 2 / 3; grid-row: 2 / 3; }
+  .gitem-d { grid-column: 1 / 3; grid-row: 3 / 4; }
 
   .who-grid { grid-template-columns: 1fr; }
   .location-wrap { grid-template-columns: 1fr; }
-  .stats-row { grid-template-columns: 1fr 1fr 1fr; }
+  .stats-row { grid-template-columns: repeat(3, 1fr); }
+  #differentiation, #how-it-works, #social-proof, #gallery, #who-for, #faq, #location { padding: 72px 0; }
+  #booking { padding: 88px 0; }
 }
+
+/* ===== RESPONSIVE — 600px (mobile-first) ===== */
 @media (max-width: 600px) {
-  .hero__heading { font-size: clamp(42px, 12vw, 64px); }
-  .features { grid-template-columns: 1fr; }
-  .benefits-grid { grid-template-columns: 1fr 1fr; }
-  .reviews-grid { grid-template-columns: 1fr; }
-  .proof-badges { grid-template-columns: 1fr; }
-  .who-grid { grid-template-columns: 1fr; }
-  .form-row { grid-template-columns: 1fr; }
+  /* Hero — mobile-specific */
+  .hero__heading { font-size: clamp(44px, 13vw, 64px); letter-spacing: -0.5px; }
+  .hero__venue { font-size: 10px; letter-spacing: 2.5px; }
+  .hero__meta-wrap { flex-direction: column; align-items: center; gap: 6px; font-size: 12px; }
+  .hero__meta-item::before { display: none; }
+  .hero__meta-item { position: relative; padding-right: 14px; }
+  .hero__meta-item::after { content: '·'; position: absolute; right: 0; color: var(--gold); opacity: 0.6; }
+  .hero__meta-item:last-child::after { display: none; }
+  .hero__cta-wrap .btn { width: 100%; text-align: center; border-radius: 0; }
+
+  /* Benefits */
+  .benefit:first-child { flex-direction: column; text-align: center; align-items: center; }
+
+  /* Gallery — horizontal scroll swipeable */
+  .gallery-mosaic {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    gap: 10px;
+    grid-template-columns: unset;
+    grid-template-rows: unset;
+    padding-bottom: 4px;
+  }
+  .gallery-mosaic::-webkit-scrollbar { height: 2px; }
+  .gallery-mosaic::-webkit-scrollbar-track { background: var(--line); }
+  .gallery-mosaic::-webkit-scrollbar-thumb { background: var(--gold); }
+  .gitem-a, .gitem-b, .gitem-c, .gitem-d {
+    flex: 0 0 82vw;
+    height: 260px;
+    grid-column: unset; grid-row: unset;
+    scroll-snap-align: start;
+  }
+
+  /* Reviews — horizontal scroll */
+  .reviews-grid {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    gap: 14px;
+    padding-bottom: 4px;
+  }
+  .reviews-grid::-webkit-scrollbar { height: 2px; }
+  .reviews-grid::-webkit-scrollbar-track { background: var(--line); }
+  .reviews-grid::-webkit-scrollbar-thumb { background: var(--gold); }
+  .review-card {
+    flex: 0 0 85vw;
+    scroll-snap-align: start;
+  }
+
+  /* Stats */
   .stats-row { grid-template-columns: 1fr; }
-  .gallery-mosaic { display: flex; flex-direction: column; }
-  .gitem-a, .gitem-b, .gitem-c, .gitem-d { height: 220px; }
+  .stat-num { font-size: clamp(56px, 18vw, 80px); }
+
+  /* Forms */
+  .form-row { grid-template-columns: 1fr; }
+
+  /* Nav buttons */
   .nav-btns { flex-direction: column; }
   .nav-btns .btn { text-align: center; }
+
+  /* Proof badges */
+  .proof-badges { grid-template-columns: 1fr; }
+  .features { grid-template-columns: 1fr; }
 }
 </style>
 </head>
 <body>
+
+<!-- SKIP LINK (a11y) -->
+<a href="#main-content" class="skip-link">דלג לתוכן הראשי</a>
 
 <!-- HEADER -->
 <header class="site-header">
   <div class="header-logo">
     <img src="logo.png" alt="פיטמאסטר ירושלים">
   </div>
-  <a href="#booking" class="btn btn-fire">הזמינו שולחן</a>
+  <a href="#booking" class="btn btn-fire" aria-label="הזמינו שולחן בפיטמאסטר ירושלים">הזמינו שולחן</a>
 </header>
 
 <!-- ── 1. HERO ── -->
-<section class="hero" id="hero">
+<section class="hero" id="hero" aria-label="מסך פתיחה">
   <div class="hero-inner">
-    <div class="hero__venue">PITMASTER JERUSALEM &nbsp;·&nbsp; CINEMA CITY &nbsp;·&nbsp; כשר למהדרין</div>
-    <div class="hero__rule">
+    <div class="hero__venue" aria-hidden="true">PITMASTER JERUSALEM &nbsp;·&nbsp; CINEMA CITY &nbsp;·&nbsp; כשר למהדרין</div>
+    <div class="hero__rule" aria-hidden="true">
       <span class="hero__rule-line"></span>
       <span class="hero__rule-line"></span>
     </div>
@@ -680,21 +797,23 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--f
       זו לא מסעדה.<br>
       <em>זה מופע.</em>
     </h1>
-    <div class="hero__rule hero__rule--bottom">
+    <div class="hero__rule hero__rule--bottom" aria-hidden="true">
       <span class="hero__rule-line"></span>
       <span class="hero__rule-line"></span>
     </div>
-    <div class="hero__meta-wrap">
-      <span class="hero__meta-item">7+ מנות בשר מעושן</span>
-      <span class="hero__meta-item">שולחנות אבירים משותפים</span>
-      <span class="hero__meta-item">פיטמאסטר אורח מתחלף</span>
+    <div class="hero__meta-wrap" role="list" aria-label="תיאור קצר">
+      <span class="hero__meta-item" role="listitem">7+ מנות בשר מעושן</span>
+      <span class="hero__meta-item" role="listitem">שולחנות אבירים משותפים</span>
+      <span class="hero__meta-item" role="listitem">פיטמאסטר אורח מתחלף</span>
     </div>
     <div class="hero__cta-wrap">
-      <a href="#booking" class="btn btn-fire">שריינו את הערב שלכם</a>
-      <a href="#how-it-works" class="hero__scroll">גלו איך זה עובד ↓</a>
+      <a href="#booking" class="btn btn-fire pulse" aria-label="שריינו מקום — קפצו לטופס ההזמנה">שריינו את הערב שלכם</a>
+      <a href="#how-it-works" class="hero__scroll" aria-label="גלו כיצד עובד הערב">גלו איך זה עובד ↓</a>
     </div>
   </div>
 </section>
+
+<main id="main-content">
 
 <!-- ── 2. DIFFERENTIATION ── -->
 <section id="differentiation">
@@ -702,9 +821,8 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--f
     <div class="diff-wrap">
       <div>
         <span class="eyebrow reveal">למה פיטמאסטר שונה</span>
-        <h2 class="reveal d1">לא הזמנתם שולחן.<br>הזמנתם כרטיס למופע.</h2>
-        <p class="diff-intro reveal d2">בכל ערב מארח <strong style="color:var(--stone)">פיטמאסטר</strong> אורח אחר — אומן אש ועישון — שמגיש משתה משותף של 7+ מנות בשר מעושן, בלי תפריט קבוע, סביב שולחנות אבירים ארוכים ומשותפים. כל מנה מוגשת ברגע אחד, עם הסבר חי מהשף — והאש, העשן וההכנה קורים ממש מולכם, במטבח הפתוח.</p>
-
+        <h2 class="reveal d1" style="font-size:clamp(28px,4vw,44px)">לא הזמנתם שולחן.<br>הזמנתם כרטיס למופע.</h2>
+        <p class="diff-intro reveal d2">בכל ערב מארח <strong style="color:var(--stone)">פיטמאסטר</strong> אורח אחר — אומן אש ועישון — שמגיש משתה משותף של 7+ מנות בשר מעושן, בלי תפריט קבוע, סביב שולחנות אבירים ארוכים ומשותפים. כל מנה מוגשת ברגע אחד, עם הסבר חי מהשף — והאש, העשן וההכנה קורים ממש מולכם.</p>
         <div class="features reveal d2">
           <div class="feature">
             <h3>פעמון לפני כל מנה</h3>
@@ -723,13 +841,13 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--f
             <p>אווירה חיה שמלווה את כל הערב מהרגע הראשון</p>
           </div>
         </div>
-
         <div class="diff-statement reveal d3">
-          השילוב היחיד בירושלים: אוכל ברמה גבוהה + מופע חי + כשרות מהדרין + אווירה מאחדת תחת קורת גג אחת. <strong>אין מסעדה כשרה אחרת בעיר שמציעה את הפורמט הזה.</strong>
+          השילוב היחיד בירושלים: אוכל ברמה גבוהה + מופע חי + כשרות מהדרין + אווירה מאחדת — תחת קורת גג אחת. <strong>אין מסעדה כשרה אחרת בעיר שמציעה את הפורמט הזה.</strong>
         </div>
       </div>
       <div class="diff-image reveal">
-        <img src="assets/atmosphere-3.webp" alt="הפיטמאסטר מגיש בשר מעושן מול הסועדים">
+        <img src="assets/atmosphere-3.webp" alt="הפיטמאסטר מגיש בשר מעושן מול הסועדים" loading="lazy">
+        <div class="diff-image-tag" aria-hidden="true">מטבח פתוח · כל ערב</div>
       </div>
     </div>
   </div>
@@ -740,43 +858,43 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--f
   <div class="container">
     <div class="section-header">
       <span class="eyebrow eyebrow--center reveal">ככה נראה הערב שלכם</span>
-      <h2 class="reveal d1">מסע של כשעתיים וחצי</h2>
+      <h2 class="reveal d1" style="font-size:clamp(28px,4.5vw,46px)">מסע של כשעתיים וחצי</h2>
       <p class="reveal d2">מהרגע שאתם מתיישבים ועד הקפה האחרון</p>
     </div>
     <div class="how-wrap">
       <div class="how-image reveal">
-        <img src="assets/atmosphere-5.jpeg" alt="הפיטמאסטר חותך סטייק מעושן בעבודת אש חיה">
+        <img src="assets/atmosphere-5.jpeg" alt="הפיטמאסטר חותך סטייק מעושן בעבודת אש חיה" loading="lazy">
       </div>
-      <div class="timeline">
-        <div class="step reveal">
-          <div class="step-num">1</div>
+      <ol class="timeline" aria-label="שלבי הערב">
+        <li class="step reveal">
+          <div class="step-num" aria-hidden="true">1</div>
           <div class="step-content">
             <h3>מתיישבים בשולחן האבירים</h3>
             <p>שולחן ארוך ומשותף, אווירה חברתית ותוססת — השתייה כבר מחכה לכם.</p>
           </div>
-        </div>
-        <div class="step reveal d1">
-          <div class="step-num">2</div>
+        </li>
+        <li class="step reveal d1">
+          <div class="step-num" aria-hidden="true">2</div>
           <div class="step-content">
             <h3>הפיטמאסטר נכנס — והפעמון מצלצל</h3>
             <p>מציג את הנתח הראשון, מספר איך עושן ולמה — והמופע מתחיל.</p>
           </div>
-        </div>
-        <div class="step reveal d2">
-          <div class="step-num">3</div>
+        </li>
+        <li class="step reveal d2">
+          <div class="step-num" aria-hidden="true">3</div>
           <div class="step-content">
             <h3>7+ מנות בשר מתחלפות</h3>
             <p>כל מנה מגיעה ברגע השיא שלה, ישר מהאש — בלי תפריט קבוע, לפי החלטת הפיטמאסטר.</p>
           </div>
-        </div>
-        <div class="step reveal d3">
-          <div class="step-num">4</div>
+        </li>
+        <li class="step reveal d3">
+          <div class="step-num" aria-hidden="true">4</div>
           <div class="step-content">
             <h3>קינוח, תה וקפה לסיום</h3>
             <p>סיום מתוק ומפנק — לא עוזבים על קיבה ריקה.</p>
           </div>
-        </div>
-      </div>
+        </li>
+      </ol>
     </div>
   </div>
 </section>
@@ -786,14 +904,18 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--f
   <div class="container">
     <div class="section-header">
       <span class="eyebrow eyebrow--center reveal">מה כלול בערב</span>
-      <h2 class="reveal d1">חבילה שלמה — בלי הפתעות</h2>
+      <h2 class="reveal d1" style="font-size:clamp(28px,4.5vw,46px)">חבילה שלמה — בלי הפתעות</h2>
     </div>
     <div class="benefits-grid reveal">
+      <!-- Featured: first-child spans 2 cols -->
       <div class="benefit">
         <div class="benefit-icon">🔥</div>
-        <h3>מופע חי בכל ערב</h3>
-        <p>פיטמאסטר אורח מתחלף קובע את הסיפור</p>
+        <div>
+          <h3>מופע חי בכל ערב</h3>
+          <p>פיטמאסטר אורח מתחלף — כל ערב הוא הפתעה אחרת. הוא קובע את הנתחים, את הסדר ואת הסיפור. אתם רק מתיישבים ונהנים.</p>
+        </div>
       </div>
+      <!-- Regular benefits -->
       <div class="benefit">
         <div class="benefit-icon">🥩</div>
         <h3>7+ מנות בשר</h3>
@@ -838,73 +960,72 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--f
   <div class="container">
     <div class="section-header">
       <span class="eyebrow eyebrow--center reveal">לא רק אנחנו אומרים את זה</span>
-      <h2 class="reveal d1">מה אומרים עלינו</h2>
+      <h2 class="reveal d1" style="font-size:clamp(28px,4.5vw,46px)">מה אומרים עלינו</h2>
     </div>
-
-    <div class="proof-badges reveal">
-      <div class="proof-badge">#1 מסעדת בשרים בירושלים — TripAdvisor</div>
-      <div class="proof-badge">#1 מסעדה כשרה בירושלים — TripAdvisor</div>
+    <div class="proof-badges reveal" role="list" aria-label="הוכחות דירוג">
+      <div class="proof-badge" role="listitem">#1 מסעדת בשרים בירושלים — TripAdvisor</div>
+      <div class="proof-badge" role="listitem">#1 מסעדה כשרה בירושלים — TripAdvisor</div>
     </div>
-
-    <div class="reviews-grid">
-      <div class="review-card reveal">
-        <span class="review-quote">"</span>
-        <div class="review-stars">★★★★★</div>
-        <p class="review-text">תתכוננו לבוא לאירוע שאתם בהחלט רוצים להיות בו! האווירה, הבשר, המוסיקה — הכל פשוט מושלם! חוויה מטורפת, עוצמתית וטעימהההה, איזה כיף שיש כזה מקום שעושה שמח לקיבה וללב.</p>
-        <div class="review-footer">
+    <div class="reviews-grid" role="list" aria-label="ביקורות לקוחות">
+      <article class="review-card reveal" role="listitem">
+        <span class="review-quote" aria-hidden="true">"</span>
+        <div class="review-stars" aria-label="דירוג 5 מתוך 5">★★★★★</div>
+        <p class="review-text">תתכוננו לבוא לאירוע שאתם בהחלט רוצים להיות בו! האווירה, הבשר, המוסיקה — הכל פשוט מושלם! חוויה מטורפת, עוצמתית וטעימה, איזה כיף שיש כזה מקום שעושה שמח לקיבה וללב.</p>
+        <footer class="review-footer">
           <span class="review-name">יוסף עקרוני</span>
           <span class="review-date">Google · לפני 3 חודשים</span>
-        </div>
-      </div>
-      <div class="review-card reveal d1">
-        <span class="review-quote">"</span>
-        <div class="review-stars">★★★★★</div>
-        <p class="review-text">מוסד ותיק ומכובד בירושלים, הצגה! הגענו למסיבת יום הולדת לחבר, היה אירוע מטורף, מושקע, מהנה וטעים. האווירה שמחה, מנות הבשר מעניינות, שפע של בשר איכותי, יין, בירות ועוד. ממליץ מאוד!</p>
-        <div class="review-footer">
+        </footer>
+      </article>
+      <article class="review-card reveal d1" role="listitem">
+        <span class="review-quote" aria-hidden="true">"</span>
+        <div class="review-stars" aria-label="דירוג 5 מתוך 5">★★★★★</div>
+        <p class="review-text">מוסד ותיק ומכובד בירושלים, הצגה! הגענו למסיבת יום הולדת, היה אירוע מטורף, מושקע, מהנה וטעים. האווירה שמחה, מנות הבשר מעניינות, שפע של בשר איכותי, יין, בירות ועוד. ממליץ מאוד!</p>
+        <footer class="review-footer">
           <span class="review-name">Alon Costo</span>
           <span class="review-date">Google · לפני 4 חודשים</span>
-        </div>
-      </div>
-      <div class="review-card reveal d2">
-        <span class="review-quote">"</span>
-        <div class="review-stars">★★★★★</div>
-        <p class="review-text">חוויה בלתי נשכחת. דאגו לפרטים הכי קטנים — האווירה, השמחה, השרות והיחס המדהים שבעלי קיבל ביום הולדתו, אפילו עלה לבמה עם השף. האוכל פשוט וואו, בהחלט נחזור. ממליצה בחום!</p>
-        <div class="review-footer">
+        </footer>
+      </article>
+      <article class="review-card reveal d2" role="listitem">
+        <span class="review-quote" aria-hidden="true">"</span>
+        <div class="review-stars" aria-label="דירוג 5 מתוך 5">★★★★★</div>
+        <p class="review-text">חוויה בלתי נשכחת. דאגו לפרטים הכי קטנים — האווירה, השמחה, השרות והיחס המדהים שבעלי קיבל ביום הולדתו, אפילו עלה לבמה עם השף. האוכל פשוט וואו, בהחלט נחזור!</p>
+        <footer class="review-footer">
           <span class="review-name">Revital Moyal</span>
           <span class="review-date">Google · לפני 4 חודשים</span>
-        </div>
-      </div>
-      <div class="review-card reveal">
-        <span class="review-quote">"</span>
-        <div class="review-stars">★★★★★</div>
+        </footer>
+      </article>
+      <article class="review-card reveal" role="listitem">
+        <span class="review-quote" aria-hidden="true">"</span>
+        <div class="review-stars" aria-label="דירוג 5 מתוך 5">★★★★★</div>
         <p class="review-text">וואו, אין לי מילים. האווירה הייתה מטורפת ברמה גבוהה, אוכל שאין כמוהו. הייתי עם בעלי, נהנינו מכל רגע ונחזור לפה עוד הרבה — ממליצה מאוד.</p>
-        <div class="review-footer">
+        <footer class="review-footer">
           <span class="review-name">צביה חיים</span>
           <span class="review-date">Google · לפני 3 חודשים</span>
-        </div>
-      </div>
-      <div class="review-card reveal d1">
-        <span class="review-quote">"</span>
-        <div class="review-stars">★★★★★</div>
+        </footer>
+      </article>
+      <article class="review-card reveal d1" role="listitem">
+        <span class="review-quote" aria-hidden="true">"</span>
+        <div class="review-stars" aria-label="דירוג 5 מתוך 5">★★★★★</div>
         <p class="review-text">וואו, איזו חוויה! הגעתי עם ציפייה לאוכל טוב — וקיבלתי הרבה יותר מזה. האוכל מעולה, האווירה מחשמלת, אנרגיות בשמיים וצוות שמח שעושה הכל שתהנו. בהחלט נחזור!</p>
-        <div class="review-footer">
+        <footer class="review-footer">
           <span class="review-name">משה קליין</span>
           <span class="review-date">Google · לפני 3 חודשים</span>
-        </div>
-      </div>
+        </footer>
+      </article>
     </div>
 
-    <div class="stats-row reveal">
-      <div class="stat">
-        <span class="stat-num">~59K</span>
+    <!-- Stats — theatrical marquee numbers -->
+    <div class="stats-row reveal" role="list" aria-label="נתונים מרכזיים">
+      <div class="stat" role="listitem">
+        <span class="stat-num" data-count="59" data-suffix="K" data-prefix="~">~59K</span>
         <span class="stat-label">עוקבים באינסטגרם</span>
       </div>
-      <div class="stat">
-        <span class="stat-num">4</span>
+      <div class="stat" role="listitem">
+        <span class="stat-num" data-count="4" data-suffix="">4</span>
         <span class="stat-label">סניפים ברחבי הארץ</span>
       </div>
-      <div class="stat">
-        <span class="stat-num">7+</span>
+      <div class="stat" role="listitem">
+        <span class="stat-num" data-count="7" data-suffix="+">7+</span>
         <span class="stat-label">מנות בשר בכל ערב</span>
       </div>
     </div>
@@ -916,24 +1037,28 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--f
   <div class="container">
     <div class="section-header">
       <span class="eyebrow eyebrow--center reveal">הצצה למופע</span>
-      <h2 class="reveal d1">תרגישו את האווירה</h2>
+      <h2 class="reveal d1" style="font-size:clamp(28px,4.5vw,46px)">תרגישו את האווירה</h2>
     </div>
-    <div class="gallery-mosaic reveal">
-      <div class="gitem gitem-a">
-        <img src="assets/atmosphere-1.jpg" alt="נתפס נמשך על אורז בסיר ברזל">
+    <div class="gallery-mosaic reveal" role="list" aria-label="גלריית תמונות">
+      <div class="gitem gitem-a" role="listitem">
+        <img src="assets/atmosphere-1.jpg" alt="נתפס נמשך על אורז בסיר ברזל — ישר מהאש לשולחן" loading="lazy">
+        <div class="gitem-cap" aria-hidden="true">נתפס נמשך · נמס בפה</div>
       </div>
-      <div class="gitem gitem-b">
-        <img src="assets/atmosphere-8.jpeg" alt="סטייק פרוס על צלחת">
+      <div class="gitem gitem-b" role="listitem">
+        <img src="assets/atmosphere-8.jpeg" alt="סטייק פרוס בצלחת" loading="lazy">
+        <div class="gitem-cap" aria-hidden="true">סטייק בשלמות</div>
       </div>
-      <div class="gitem gitem-c">
-        <img src="assets/atmosphere-6.jpeg" alt="בשר נמשך מעל מגש">
+      <div class="gitem gitem-c" role="listitem">
+        <img src="assets/atmosphere-6.jpeg" alt="בשר נמשך מעל מגש מתובל" loading="lazy">
+        <div class="gitem-cap" aria-hidden="true">ישר מהאש</div>
       </div>
-      <div class="gitem gitem-d">
-        <img src="assets/atmosphere-7.jpeg" alt="פלטת בשר מעושן">
+      <div class="gitem gitem-d" role="listitem">
+        <img src="assets/atmosphere-7.jpeg" alt="פלטת בשר מעושן עם ירקות" loading="lazy">
+        <div class="gitem-cap" aria-hidden="true">פלטה ברמת שף</div>
       </div>
     </div>
     <div style="text-align:center;margin-top:36px" class="reveal">
-      <a href="#booking" class="btn btn-fire">רוצים לחוות את זה? שריינו עכשיו</a>
+      <a href="#booking" class="btn btn-fire" aria-label="שריינו שולחן — עברו לטופס ההזמנה">רוצים לחוות את זה? שריינו עכשיו</a>
     </div>
   </div>
 </section>
@@ -943,36 +1068,24 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--f
   <div class="container">
     <div class="section-header">
       <span class="eyebrow eyebrow--center reveal">למי זה מתאים</span>
-      <h2 class="reveal d1">מושלם בשביל...</h2>
+      <h2 class="reveal d1" style="font-size:clamp(28px,4.5vw,46px)">מושלם בשביל...</h2>
     </div>
-    <div class="who-grid reveal">
-      <div class="who-item">
-        <span class="who-mark">א</span>
-        <div>
-          <h3>זוגות</h3>
-          <p>ערב מיוחד ויוצא דופן, לא עוד מסעדה רגילה</p>
-        </div>
+    <div class="who-grid reveal" role="list">
+      <div class="who-item" role="listitem">
+        <span class="who-mark" aria-hidden="true">א</span>
+        <div><h3>זוגות</h3><p>ערב מיוחד ויוצא דופן, לא עוד מסעדה רגילה</p></div>
       </div>
-      <div class="who-item">
-        <span class="who-mark">ב</span>
-        <div>
-          <h3>חבורות חברים</h3>
-          <p>חוויה משותפת שמדברים עליה הרבה אחרי</p>
-        </div>
+      <div class="who-item" role="listitem">
+        <span class="who-mark" aria-hidden="true">ב</span>
+        <div><h3>חבורות חברים</h3><p>חוויה משותפת שמדברים עליה הרבה אחרי</p></div>
       </div>
-      <div class="who-item">
-        <span class="who-mark">ג</span>
-        <div>
-          <h3>משפחות וחגיגות</h3>
-          <p>ימי הולדת ואירועים שכולם יזכרו לנצח</p>
-        </div>
+      <div class="who-item" role="listitem">
+        <span class="who-mark" aria-hidden="true">ג</span>
+        <div><h3>משפחות וחגיגות</h3><p>ימי הולדת ואירועים שכולם יזכרו לנצח</p></div>
       </div>
-      <div class="who-item">
-        <span class="who-mark">ד</span>
-        <div>
-          <h3>אירועי חברה</h3>
-          <p>קבוצות גדולות ואירועים פרטיים</p>
-        </div>
+      <div class="who-item" role="listitem">
+        <span class="who-mark" aria-hidden="true">ד</span>
+        <div><h3>אירועי חברה</h3><p>קבוצות גדולות ואירועים פרטיים</p></div>
       </div>
     </div>
     <div style="text-align:center" class="reveal">
@@ -986,7 +1099,7 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--f
   <div class="container">
     <div class="section-header">
       <span class="eyebrow eyebrow--center reveal">שאלות נפוצות</span>
-      <h2 class="reveal d1">עוד כמה דברים שכדאי לדעת</h2>
+      <h2 class="reveal d1" style="font-size:clamp(28px,4.5vw,46px)">עוד כמה דברים שכדאי לדעת</h2>
     </div>
     <div class="faq-list reveal">
       <details open>
@@ -1015,7 +1128,7 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--f
       </details>
       <details>
         <summary>יש ישיבה משותפת עם זרים?</summary>
-        <p>שולחנות האבירים הם חלק מהחוויה — ישיבה משותפת וארוכה שמוסיפה לאווירה החברתית והאנרגטית של הערב.</p>
+        <p>שולחנות האבירים הם חלק מהחוויה — ישיבה משותפת שמוסיפה לאווירה החברתית של הערב.</p>
       </details>
       <details>
         <summary>צריך להזמין מראש?</summary>
@@ -1031,7 +1144,7 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--f
     <div class="location-wrap">
       <div>
         <span class="eyebrow reveal">מיקום והגעה</span>
-        <h2 class="reveal d1">איך מגיעים</h2>
+        <h2 class="reveal d1" style="font-size:clamp(28px,4.5vw,46px)">איך מגיעים</h2>
         <div class="info-block reveal d2">
           <span class="info-label">כתובת</span>
           <span>סינמה סיטי, ירושלים</span>
@@ -1045,12 +1158,18 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--f
           <span>ערבים, לפי ימים — מומלץ לתאם הזמנה מראש</span>
         </div>
         <div class="nav-btns reveal d3">
-          <a class="btn btn-outline" target="_blank" rel="noopener" href="https://waze.com/ul?q=Cinema%20City%20Jerusalem&navigate=yes">ניווט עם Waze</a>
-          <a class="btn btn-outline" target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=Cinema+City+Jerusalem">Google Maps</a>
+          <a class="btn btn-outline" target="_blank" rel="noopener noreferrer" href="https://waze.com/ul?q=Cinema%20City%20Jerusalem&navigate=yes" aria-label="פתח ניווט ל-Waze לסינמה סיטי ירושלים">ניווט עם Waze</a>
+          <a class="btn btn-outline" target="_blank" rel="noopener noreferrer" href="https://www.google.com/maps/search/?api=1&query=Cinema+City+Jerusalem" aria-label="פתח Google Maps לסינמה סיטי ירושלים">Google Maps</a>
         </div>
       </div>
       <div class="map-frame reveal d1">
-        <iframe src="https://www.google.com/maps?q=Cinema+City+Jerusalem&output=embed" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="מפת מיקום פיטמאסטר ירושלים — סינמה סיטי"></iframe>
+        <iframe
+          src="https://www.google.com/maps?q=Cinema+City+Jerusalem&output=embed"
+          loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade"
+          title="מפת מיקום פיטמאסטר ירושלים — סינמה סיטי"
+          aria-label="מפה מוטמעת של מיקום פיטמאסטר ירושלים"
+        ></iframe>
       </div>
     </div>
   </div>
@@ -1063,15 +1182,15 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--f
     <h2 class="reveal d1">המופע מתחיל הערב — יש לכם מקום?</h2>
     <p class="booking-lede reveal d2">השאירו פרטים ונחזור אליכם לתיאום הערב המושלם. מקומות מוגבלים בכל ערב.</p>
 
-    <form class="booking-form reveal d2" id="booking-form">
+    <form class="booking-form reveal d2" id="booking-form" novalidate aria-label="טופס הזמנת שולחן">
       <div class="form-row">
         <div>
           <label for="name">שם מלא</label>
-          <input id="name" name="name" type="text" placeholder="השם שלכם" required>
+          <input id="name" name="name" type="text" placeholder="השם שלכם" required autocomplete="name">
         </div>
         <div>
           <label for="phone">טלפון</label>
-          <input id="phone" name="phone" type="tel" placeholder="050-0000000" required>
+          <input id="phone" name="phone" type="tel" placeholder="050-0000000" required autocomplete="tel">
         </div>
       </div>
       <div class="form-row">
@@ -1081,26 +1200,26 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--f
         </div>
         <div>
           <label for="guests">מספר סועדים</label>
-          <input id="guests" name="guests" type="number" min="1" placeholder="לדוגמה: 4" required>
+          <input id="guests" name="guests" type="number" min="1" max="200" placeholder="לדוגמה: 4" required>
         </div>
       </div>
       <div class="form-row form-row-full">
         <div>
-          <label for="notes">הערות (כשרות / רגישויות / מאורע מיוחד)</label>
-          <textarea id="notes" name="notes" rows="3" placeholder="נשמח לדעת מראש על כל בקשה"></textarea>
+          <label for="notes">הערות</label>
+          <textarea id="notes" name="notes" rows="3" placeholder="כשרות מיוחדת, רגישויות מזון, מאורע מיוחד..."></textarea>
         </div>
       </div>
       <button type="submit" class="btn btn-fire" id="booking-submit">שריינו את הערב שלכם</button>
-      <div id="booking-status" class="form-status"></div>
-
-      <div class="or-divider">או</div>
-      <a href="https://wa.me/972500000000" target="_blank" rel="noopener" class="btn btn-wa" style="display:block;text-align:center;border-radius:0">שלחו לנו הודעת וואטסאפ</a>
-
-      <div class="booking-trust">#1 מסעדה כשרה בירושלים — TripAdvisor</div>
+      <div id="booking-status" class="form-status" role="status" aria-live="polite"></div>
+      <div class="or-divider" aria-hidden="true">או</div>
+      <a href="https://wa.me/972500000000" target="_blank" rel="noopener noreferrer" class="btn btn-wa" style="display:block;text-align:center;border-radius:0" aria-label="שלחו הודעת וואטסאפ לפיטמאסטר ירושלים">שלחו לנו הודעת וואטסאפ</a>
+      <div class="booking-trust" aria-label="אות איכות">#1 מסעדה כשרה בירושלים — TripAdvisor</div>
       <div class="booking-urgency">מקומות מוגבלים בכל ערב</div>
     </form>
   </div>
 </section>
+
+</main>
 
 <!-- ── FOOTER ── -->
 <footer class="site-footer">
@@ -1115,57 +1234,114 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--f
 </footer>
 
 <!-- ── STICKY MOBILE CTA ── -->
-<div class="sticky-cta">
-  <a href="#booking" class="btn btn-fire">שריינו את הערב שלכם</a>
+<div class="sticky-cta" aria-hidden="true">
+  <a href="#booking" class="btn btn-fire" tabindex="-1">שריינו את הערב שלכם</a>
 </div>
 
 <!-- EmailJS -->
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <script>
+(function () {
+  'use strict';
+
+  /* ── EmailJS ── */
   const EMAILJS_PUBLIC_KEY  = "OaWVXQZdCin_UAGTT";
   const EMAILJS_SERVICE_ID  = "service_0iqr1ja";
   const EMAILJS_TEMPLATE_ID = "template_fixbxoh";
-
   emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY });
 
-  const bookingForm = document.getElementById('booking-form');
-  const submitBtn   = document.getElementById('booking-submit');
-  const statusEl    = document.getElementById('booking-status');
+  const form      = document.getElementById('booking-form');
+  const submitBtn = document.getElementById('booking-submit');
+  const statusEl  = document.getElementById('booking-status');
 
-  bookingForm.addEventListener('submit', function(e) {
+  form.addEventListener('submit', function (e) {
     e.preventDefault();
     submitBtn.disabled = true;
     submitBtn.textContent = 'שולח...';
     statusEl.textContent = '';
     statusEl.className = 'form-status';
 
-    emailjs.sendForm(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, bookingForm)
-      .then(function() {
+    emailjs.sendForm(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, form)
+      .then(function () {
         statusEl.textContent = 'הפרטים נשלחו בהצלחה! נחזור אליכם בהקדם.';
         statusEl.className = 'form-status ok';
-        bookingForm.reset();
+        form.reset();
       })
-      .catch(function(err) {
+      .catch(function (err) {
         console.error('EmailJS error:', err);
         statusEl.textContent = 'אירעה שגיאה בשליחה. נסו שוב או צרו קשר בוואטסאפ.';
         statusEl.className = 'form-status err';
       })
-      .finally(function() {
+      .finally(function () {
         submitBtn.disabled = false;
         submitBtn.textContent = 'שריינו את הערב שלכם';
       });
   });
 
-  // Scroll reveal
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(e => {
+  /* ── Scroll reveal ── */
+  const revealObserver = new IntersectionObserver(function (entries) {
+    entries.forEach(function (e) {
       if (e.isIntersecting) {
         e.target.classList.add('in');
-        observer.unobserve(e.target);
+        revealObserver.unobserve(e.target);
       }
     });
   }, { threshold: 0.1 });
-  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+  document.querySelectorAll('.reveal').forEach(function (el) { revealObserver.observe(el); });
+
+  /* ── Count-up animation for stats ── */
+  function countUp(el) {
+    var target = parseInt(el.dataset.count, 10);
+    var suffix = el.dataset.suffix || '';
+    var prefix = el.dataset.prefix || '';
+    var duration = 1400;
+    var start = performance.now();
+
+    function tick(now) {
+      var t = Math.min((now - start) / duration, 1);
+      var eased = 1 - Math.pow(1 - t, 3); // ease-out cubic
+      el.textContent = prefix + Math.round(eased * target) + suffix;
+      if (t < 1) requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+  }
+
+  var statsObserver = new IntersectionObserver(function (entries) {
+    entries.forEach(function (e) {
+      if (e.isIntersecting) {
+        e.target.querySelectorAll('.stat-num[data-count]').forEach(countUp);
+        statsObserver.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.5 });
+  var statsRow = document.querySelector('.stats-row');
+  if (statsRow) statsObserver.observe(statsRow);
+
+  /* ── Subtle hero parallax (performance-safe, RAF-throttled) ── */
+  var heroEl = document.querySelector('.hero');
+  if (heroEl) {
+    var ticking = false;
+    window.addEventListener('scroll', function () {
+      if (!ticking) {
+        requestAnimationFrame(function () {
+          var y = window.scrollY;
+          heroEl.style.backgroundPositionY = (35 + y * 0.18) + '%';
+          ticking = false;
+        });
+        ticking = true;
+      }
+    }, { passive: true });
+  }
+
+  /* ── Reduced motion: disable all animations ── */
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    document.querySelectorAll('.reveal').forEach(function (el) { el.classList.add('in'); });
+    document.querySelectorAll('.stat-num[data-count]').forEach(function (el) {
+      el.textContent = (el.dataset.prefix || '') + el.dataset.count + (el.dataset.suffix || '');
+    });
+  }
+
+})();
 </script>
 
 </body>
